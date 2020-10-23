@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>把dom转为虚拟dom</title>
+    <div id="root"><img alt="空的img" />
+        <div title="div-box"><p>box</p></div>
+    </div>
+</head>
+<body>
+    <script>
+        /* 实现方式：
+        1. 将dom结构转换为对象表示
+        <img /> => {tag: 'img'}
+        文本节点 => {tag: undefined, value: '文本节点'}
+        <img title="img" class="c" /> => 
+        {tag: 'img', data: {title: 'img', class: 'c'}}
+        <div><img /></div> => 
+        {tag: 'div', children: [ {tag: 'img'} ]} */
+
+        /* // 2. 实现虚拟dom的数据结构
+        function VNODE(tag, data, value, type){
+            this.tag = tag && tag.toLowerCase()
+            this.data = data
+            this.value = value
+            this.type = type
+            this.children = []
+        }
+        VNODE.prototype.appendChild = function(vnode){
+            this.children.push(vnode)
+        }
+
+        // 3. 可能用到的知识点
+        // 判断元素的节点类型 
+        // node.nodeType: 1 元素类型， 2 attr 属性， 3 文本节点
+
+        // 获取元素类型的标签名和属性 属性存为健值对
+        let nodeName = node.nodeName
+        let attrs = node.attributes
+        let _data = {}
+        for(let i= 0; i<attrs.length; i++){
+            _data[attrs[i].nodeName] = attrs[i].nodeValue
+        }
+
+        // 获取当前元素子节点
+        let childNodes = node.childNodes
+        let children = childNodes.length
+        for(let i=0;i<children.length;i++){
+            console.log(childNodes[i])
+        }
+
+        // 判断类型，返回虚拟dom
+        function getVnode(node){
+            let nodeType = node.nodeType
+            let _vnode = null;
+            if(nodeType === 1){
+                // 元素类型： 获取属性，判断子元素，创建虚拟dom
+            }else if(nodeType == 3){
+                // 文本类型： 直接创建虚拟dom
+            }
+            return _vnode
+        } */
+
+        // 6. 整体实现
+        function Vnode(tag, data, value, type){
+            this.tag = tag && tag.toLowerCase()
+            this.data = data
+            this.value = value
+            this.type = type
+            this.children = []
+        }
+        Vnode.prototype.appendChild = function(vnode){
+            this.children.push(vnode)
+        }
+        function getVNode(node){
+            console.log('node', node)
+            let nodeType = node.nodeType
+            let _vnode = null;
+            if(nodeType === 1){
+                // 元素类型： 获取属性，判断子元素，创建虚拟dom
+                let tag = node.nodeName;
+                let attrs = node.attributes
+                let _data = {}
+                let attrLen = attrs.length
+                for(let i=0;i<attrLen;i++){
+                    _data[attrs[i].nodeName] = attrs[i]
+                }
+                _vnode = new Vnode(tag, _data, undefined, nodeType)
+                let childNodes = node.childNodes
+                console.log('childNodes', childNodes)
+                let childLen = childNodes.length
+                for(let i=0;i<childLen;i++){
+                    _vnode.appendChild(getVNode(childNodes[i]))
+                }
+            }else if(nodeType == 3){
+                // 文本类型： 直接创建虚拟dom
+                _vnode = new Vnode(undefined, undefined, node.nodeValue, nodeType)
+            }
+            return _vnode
+        }
+
+        let root = document.querySelector('#root')
+        let vroot = getVNode(root)
+        console.log('vroot', vroot)
+    </script>
+</body>
+</html>
