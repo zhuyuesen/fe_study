@@ -26,4 +26,40 @@ module.exports = {
     }
 }
 ```
+## 20-12-11 移动端适配方案
+- media quires
+- flex 布局
+- rem + viewport
+- vh vw
+- 百分比
+
+1. media quires：
+早期的布局方式，通过查询设备的宽度来执行不同的css代码
+```css
+@media only screen and (max-width: 374){
+
+}
+@media only screen and (min-width: 375px){
+
+}
+@media only screen and (min-width: 414px){
+    
+}
+
+```
+
+2. flex布局：
+它的viewport是固定的
+`<meta name="viewport" content="width=device-width, initial-scale=1.0">`
+宽度自适应，元素采用px做单位
+
+3. rem + viewport 缩放：
+原理：
+根据rem将页面放大dpr倍，然后将viewport设置为1/dpr.
+如 iPhone6 plus的dpr为3，则页面整体放大3倍，1px(css 单位)在plus下默认为3px(物理像素),
+然后viewport设置为1/3,这样页面整体缩回原始大小，从而实现高清。
+这样整个网页在设备内显示时的页面宽度就会等于设备逻辑像素大小，也就是device-width,整个device-width的计算公式为：
+设备的物理分辨率/(devicePixelRatio * scale),
+在scale为1的情况下，device-width = 设备的物理分辨率/devicePixelRatio.
+
 

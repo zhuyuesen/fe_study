@@ -73,5 +73,91 @@ function dec2bin(dec){
 function bin2dec(bin){
     return parseInt(bin, 2).toString(10);
 }
+// 注意 <<n==*(2^n)
 
-注意 <<n==*(2^n)
+// 20-12-07 日期时间格式化
+/**
+ * formate： yyyy-MM-dd hh:mm:ss
+ * @param {*} date
+ * @param {*} formate
+ */
+function formateDateTime(date = new Date(), formate = 'yyyy-MM-dd hh:mm:ss'){
+    if(typeof date === "string") data = new Date(date)
+    if(Object.prototype.toString.call(date) !== "[object Date]" || date.toString() === 'Invalid Date'){
+        throw Error('请传入日期或日期字符串')
+    }
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    const hour = date.getHours()
+    const minute = date.getMinutes()
+    const second = date.getSeconds()
+
+    let dateStr =
+        formate.replace('yyyy',year)
+        .replace('MM',formateNumber(month))
+        .replace('dd',formateNumber(day))
+        .replace('hh',formateNumber(hour))
+        .replace('mm',formateNumber(minute))
+        .replace('ss',formateNumber(second))
+    return dateStr
+}
+
+const formateNumber = n => {
+    n = n.toString()
+    return n[1] ? n : '0'+n
+}
+
+// 20-12-11 w完善下面函数，实现图片的加载
+/*
+function createImg(url){}
+createImg(url).then(value => {
+    document.body.appendChild(value)
+})
+*/
+
+// error
+function createImg(url){
+    return new Promise((resolve,reject) => {
+        return fetch(url)
+        .then(res => {
+            resolve(res)
+        })
+        .catch(err => {
+            reject(err)
+        })
+    })
+}
+
+// ans 1
+function createImg(url){
+   return new Promise((resolve,reject) => {
+       if(ur){
+           let ImgEle = document.createElement('img')
+           ImgEle.src = url
+           resolve(ImgEle)
+       }else{
+           reject('url is not right')
+       }
+   }) 
+}
+
+// ans 2
+function createImg(url){
+    return new Promise((resolve,reject) => {
+        const img = new Image();
+        img.src = url;
+        setTimeout(()=> {
+            resolve(img)
+        }, 1000)
+    })
+}
+
+createImg('1.jpg')
+.then(value => {
+    document.body.appendChild(value)
+    return createImg('2.png')
+})
+.then(value => {
+    document.body.appendChild(value)
+})
