@@ -2,15 +2,12 @@
 // 订阅者 Dep
 class Dep {
     constructor () {
-        /* 用来存放Watcher对象的数组 */
-        this.subs = [];
+        this.subs = []; /* 用来存放Watcher对象的数组 */
     }
-    /* 在subs中添加一个Watcher对象 */
-    addSub (sub) {
+    addSub (sub) { /* 在subs中添加一个Watcher对象 */
         this.subs.push(sub);
     }
-    /* 通知所有Watcher对象更新视图 */
-    notify () {
+    notify () { /* 通知所有Watcher对象更新视图 */
         this.subs.forEach((sub) => {
             sub.update();
         })
@@ -23,14 +20,14 @@ class Watcher {
         /* 在new一个Watcher对象时将该对象赋值给Dep.target，在get中会用到 */
         Dep.target = this;
     }
-    /* 更新视图的方法 */
-    update () {
+    update () { /* 更新视图的方法 */
         console.log("视图更新啦～");
     }
 }
-Dep.target = null;
+// Dep.target = null;
 
 function observer (value) {
+    console.log('observer')
     if (!value || (typeof value !== 'object')) {
         return;
     }
@@ -41,14 +38,16 @@ function observer (value) {
 
 // 依赖收集
 function defineReactive (obj, key, val) {
+    console.log('defineReactive')
     /* 一个Dep类对象 */
     const dep = new Dep();
-    
+    console.log('dep')
     Object.defineProperty(obj, key, {
         enumerable: true,
         configurable: true,
         get: function reactiveGetter () {
             /* 将Dep.target（即当前的Watcher对象存入dep的subs中） */
+            console.log('Dep.target', Dep.target)
             dep.addSub(Dep.target);
             console.log('dep', dep)
             return val;         
@@ -67,7 +66,7 @@ class Vue {
         observer(this._data);
         /* 新建一个Watcher观察者对象，这时候Dep.target会指向这个Watcher对象 */
         var watcher = new Watcher();
-        console.log('watcher', watcher)
+        // console.log('watcher watcher watcher', watcher)
         /* 在这里模拟render的过程，为了触发test属性的get函数 */
         console.log('render~', this._data.test);
     }
